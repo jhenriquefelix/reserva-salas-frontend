@@ -1,0 +1,77 @@
+<h1>{{ titulo() }}</h1>
+
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form" novalidate>
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>Local</mat-label>
+    <mat-select formControlName="localId" required>
+      <mat-option *ngFor="let l of locais()" [value]="l.id">{{ l.nome }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="hasError('localId','required')">Selecione um local.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>Sala</mat-label>
+    <mat-select formControlName="salaId" required>
+      <mat-option *ngFor="let s of salas()" [value]="s.id">{{ s.nome }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="hasError('salaId','required')">Selecione uma sala.</mat-error>
+  </mat-form-field>
+
+  <div class="linha">
+    <mat-form-field appearance="outline" class="campo">
+      <mat-label>Início</mat-label>
+      <input matInput type="datetime-local" formControlName="inicioLocal" required>
+      <mat-error *ngIf="hasError('inicioLocal','required')">Informe o início.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="campo">
+      <mat-label>Fim</mat-label>
+      <input matInput type="datetime-local" formControlName="fimLocal" required>
+      <mat-error *ngIf="hasError('fimLocal','required')">Informe o fim.</mat-error>
+    </mat-form-field>
+  </div>
+
+  <mat-error *ngIf="intervaloInvalido" class="aviso">
+    O início deve ser menor que o fim.
+  </mat-error>
+
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>Responsável (nome)</mat-label>
+    <input matInput formControlName="responsavelNome" required>
+    <mat-error *ngIf="hasError('responsavelNome','required')">Informe o nome.</mat-error>
+    <mat-error *ngIf="hasError('responsavelNome','minlength')">Mínimo de 2 caracteres.</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>E-mail do responsável</mat-label>
+    <input matInput type="email" formControlName="responsavelEmail" required autocomplete="email">
+    <mat-error *ngIf="hasError('responsavelEmail','required')">Informe o e-mail.</mat-error>
+    <mat-error *ngIf="hasError('responsavelEmail','email')">E-mail inválido.</mat-error>
+  </mat-form-field>
+
+  <h3>Opção de Café (opcional)</h3>
+  <mat-checkbox formControlName="cafe">Solicitar café</mat-checkbox>
+
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>Quantidade</mat-label>
+    <input matInput type="number" formControlName="cafeQuantidade">
+    <mat-error *ngIf="form.get('cafeQuantidade')?.hasError('required') || form.get('cafeQuantidade')?.hasError('min')">
+      Informe a quantidade (≥ 1).
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="campo">
+    <mat-label>Descrição</mat-label>
+    <input matInput formControlName="cafeDescricao">
+    <mat-error *ngIf="form.get('cafeDescricao')?.hasError('required') || form.get('cafeDescricao')?.hasError('minlength')">
+      Informe uma descrição.
+    </mat-error>
+  </mat-form-field>
+
+  <div class="acoes">
+    <button mat-stroked-button color="primary" type="button" (click)="voltar()">Voltar</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || facade.carregando()">Salvar</button>
+  </div>
+
+  <p class="erro" *ngIf="facade.erro()">{{ facade.erro() }}</p>
+</form>

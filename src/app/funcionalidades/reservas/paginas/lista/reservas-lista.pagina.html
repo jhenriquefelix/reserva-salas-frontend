@@ -1,0 +1,60 @@
+<div class="cabecalho">
+  <h1>Reservas</h1>
+  <button mat-raised-button color="primary" [routerLink]="['/reservas/novo']">
+    <mat-icon>add</mat-icon>
+    Nova Reserva
+  </button>
+</div>
+
+<ng-container *ngIf="facade.carregando(); else conteudo">
+  <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+</ng-container>
+
+<ng-template #conteudo>
+  <table mat-table [dataSource]="facade.lista() || []" class="mat-elevation-z2" *ngIf="(facade.lista() || []).length; else vazio">
+    <ng-container matColumnDef="local">
+      <th mat-header-cell *matHeaderCellDef> Local </th>
+      <td mat-cell *matCellDef="let r"> {{ r.localNome }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="sala">
+      <th mat-header-cell *matHeaderCellDef> Sala </th>
+      <td mat-cell *matCellDef="let r"> {{ r.salaNome }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="inicio">
+      <th mat-header-cell *matHeaderCellDef> Início </th>
+      <td mat-cell *matCellDef="let r"> {{ r.inicio | date:'dd/MM/yyyy HH:mm' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fim">
+      <th mat-header-cell *matHeaderCellDef> Fim </th>
+    <td mat-cell *matCellDef="let r"> {{ r.fim | date:'dd/MM/yyyy HH:mm' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="responsavel">
+      <th mat-header-cell *matHeaderCellDef> Responsável </th>
+      <td mat-cell *matCellDef="let r"> {{ r.responsavelNome }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef> Ações </th>
+      <td mat-cell *matCellDef="let r">
+        <button mat-icon-button color="primary" [routerLink]="['/reservas', r.id, 'editar']" aria-label="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="excluir(r.id)" aria-label="Excluir">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+    <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+  </table>
+  <ng-template #vazio>
+    <p>Nenhuma reserva encontrada.</p>
+  </ng-template>
+
+  <p class="erro" *ngIf="facade.erro()">{{ facade.erro() }}</p>
+</ng-template>
